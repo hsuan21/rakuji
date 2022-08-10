@@ -243,7 +243,7 @@ const Products = (props) => {
       <div className="row">
         {/* 商品類別 */}
         <div className=" col-md-2 product_category_aside">
-          <div className="sticky-top" id="category_buttons">
+          <div className="product_category_aside_btns" id="category_buttons">
             {category.map((v, i) => {
               return (
                 <button
