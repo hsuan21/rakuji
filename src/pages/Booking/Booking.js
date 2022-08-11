@@ -12,12 +12,10 @@ import BookingTimeButton from "./components/BookingTimeButton";
 const Booking = ({ auth }) => {
   const history = useHistory();
 
-  //假會員ID
-  // localStorage.setItem("memberId", 5);
-
-  //一進到頁面取得分店資訊
   useEffect(() => {
+    //一進到頁面取得資料庫分店資訊
     fetchStoreData();
+    //一進到頁面取得資料庫用餐時段資訊
     fetchMealTimeData();
   }, []);
 
@@ -27,17 +25,22 @@ const Booking = ({ auth }) => {
 
   // 大人
   const [peopleAdultInput, setPeopleAdultInput] = useState("1");
-  // console.log(peopleAdultInput)
+  // console.log(peopleAdultInput);
 
   // 小孩
   const [peopleKidInput, setPeopleKidInput] = useState("0");
   // console.log(peopleKidInput)
 
+
   // react-datepicker
+
+  // react-datepicker預設的日期，為未格式化的日期
   const [startDate, setStartDate] = useState(new Date());
-  // console.log(startDate)
+  // console.log(startDate) // Thu Aug 11 2022 11:00:52 GMT+0800 (台北標準時間)
+
+  // 將日期格式化
   const startDateformat = moment(startDate).format("YYYY/MM/DD");
-  //  console.log(startDateformat)
+  //  console.log(startDateformat)  // 2022/08/11
 
   // 時段
   const [mealTimeInput, setMealTimeInput] = useState("中午");
@@ -86,56 +89,70 @@ const Booking = ({ auth }) => {
   // ------------------------------------------------------------------------------------------------------
   // 用餐人數
 
+  // 大人目前可訂位的人數
   const [totalPeoplesAdult, setTotalPeoplesAdult] = useState([
     1, 2, 3, 4, 5, 6, 7, 8,
-  ]);
-
+  ]); 
+ // 小孩目前可訂位的人數
   const [totalPeoplesKid, setTotalPeoplesKid] = useState([
     0, 1, 2, 3, 4, 5, 6, 7,
   ]);
 
+  // 改變大人人數時執行這個函數
   const selectHandlerAdult = (e) => {
+    // 將選擇的人數轉為數字
     let peoples = parseInt(e.target.value);
+    // 製作一個空陣列，用來存放剩下小孩可訂位的剩餘人數
     let t_peoples = [];
+    // 將剩下可訂位的剩餘人數存到新陣列，因為小還可以為0人，所以i從0開始
     for (let i = 0; i <= 8 - peoples; i++) {
       t_peoples.push(i);
     }
+    // 將小孩目前可訂位的人數陣列更新
     setTotalPeoplesKid(t_peoples);
+    // 將大人人數存到state
     setPeopleAdultInput(e.target.value);
+    // 選擇大人人數後將訂位時間清空，否則會超過剩餘人數
     setBookingTimeInput("");
   };
 
+  // 改變小孩人數時執行這個函數
   const selectHandlerKid = (e) => {
+    // 將選擇的人數轉為數字
     let peoples = parseInt(e.target.value);
+    // 製作一個空陣列，用來存放剩下大人可訂位的剩餘人數
     let t_peoples = [];
+    // 將剩下可訂位的剩餘人數存到新陣列，因為大人最少為一人，所以i從1開始
     for (let i = 1; i <= 8 - peoples; i++) {
       t_peoples.push(i);
     }
+    // 將大人目前可訂位的人數陣列更新
     setTotalPeoplesAdult(t_peoples);
+    // 將小孩人數存到state
     setPeopleKidInput(e.target.value);
+    // 選擇小孩人數後將訂位時間清空，否則會超過剩餘人數
     setBookingTimeInput("");
   };
 
   // ------------------------------------------------------------------------------------------------------
+  
+  // 現在的時間，格式為Fri Aug 12 2022 11:25:38 GMT+0800 (台北標準時間)
   const date = new Date();
+  // console.log(date);
   // console.log(new Date(date.setDate(date.getDate()+1)))
 
+  // 現在的時間，格式為11:26
   const nowtime = moment(date).format("HH:mm");
   // console.log(nowtime > "22:27")
 
+  // 現在的日期，格式為2022/08/11
   const nowDate = moment(date).format("YYYY/MM/DD");
   // console.log(nowDate);
   // console.log(startDateformat)
 
   // console.log(startDateformat > nowDate);
 
-  // -------------------------------------------------------------------------
 
-  // ------------------------------------------------------------------------------------------------------
-
-  // ------------------------------------------------------------------------------------------------------
-
-  // ------------------------------------------------------------------------------------------------------
 
   return (
     // <div style={{ minHeight: " calc(100vh - 86px - 308px)" }}>線上訂位</div>
@@ -149,8 +166,10 @@ const Booking = ({ auth }) => {
           <select
             className="form-select"
             aria-label="Default select example"
+            // 選擇分店後執行函式
             onChange={(e) => {
               setStoreInput(e.target.value);
+              // 將訂位時間清空，否則切換分店後舊的訂位時間還存到state
               setBookingTimeInput("");
               if (
                 nowtime > "14:00" &&
@@ -252,6 +271,7 @@ const Booking = ({ auth }) => {
           {bookingTime
             .filter((v) => v.booking_time === mealTimeInput)
             .map((v, i) => {
+              // 檢查是否有選擇分店，沒有就不顯示時間
               if (storeInput !== "") {
                 return (
                   <BookingTimeButton

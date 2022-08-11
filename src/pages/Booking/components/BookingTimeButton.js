@@ -33,6 +33,7 @@ const BookingTimeButton = ({
   // -------------------------------------------------------------------------
 
   const bookingTime = (time) => {
+    // 該時段目前已訂位筆數
     const bookingDataFilter = bookingData
       .filter((v) => v.booking_date == startDateformat)
       .filter((v) => v.store == storeInput)
@@ -112,7 +113,7 @@ const BookingTimeButton = ({
 
   
   // -------------------------------------------------------------------------
-  console.log(bookingTimeInput)
+  // console.log(bookingTimeInput)
 
 
   return (
@@ -120,6 +121,8 @@ const BookingTimeButton = ({
       <input
         type="button"
         value={time}
+        // 假設訂位時間的state等於button的時間，加上button_focus的class
+        // 假設日期為今天且現在的時間大於button的時間，加上button_focus的class
         className={` mb-0
         ${bookingTimeInput == time ? "button_focus" : ""}
         ${nowtime >= time && startDateformat == nowDate ? "button_close" : ""}
